@@ -1,7 +1,10 @@
-from flask import render_template, url_for, flash, redirect,session
+import os
+import secrets
+from PIL import Image
+from flask import render_template, url_for, flash, redirect, request
 import mysql.connector
-from forum import app, bcrypt, login_required
-from forum.forms import RegistrationForm, LoginForm
+from forum import app, bcrypt, login_required,session
+from forum.forms import RegistrationForm, LoginForm, UpdateAccountForm
 
 con = mysql.connector.connect(
     host = "localhost",
@@ -61,6 +64,9 @@ def login():
             print("__________________Account Auth Successfull__________________")
             session["user_id"] = rows[0][0]
             session["username"] = rows[0][1]
+            session["name"] = rows[0][2]
+            session["email"] = rows[0][3]
+            session["image_file"] = rows[0][5]
             flash(f'Welcome {rows[0][1]}!', 'success')
             #flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
@@ -85,10 +91,58 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/account")
+def save_picture(form_picture):
+    random_hex= secrets.token_hex(8)
+    _,f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path,'static/profile_pics',picture_fn)
+
+    i = Image.open(form_picture)
+    width, height = i.size   # Get dimensions
+
+    if width>height: 
+        left = (width - height)/2
+        top = 0 
+        right = (width + height)/2
+        bottom = (height + height)/2
+        i = i.crop((left, top, right, bottom))
+    elif height>width:
+        left = 0
+        top = (height - width)/2
+        right = (width + width)/2
+        bottom = (height + width)/2
+        i = i.crop((left, top, right, bottom))
+
+    output_size = (125, 125)
+    # Crop the center of the image
+ 
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    
+    return picture_fn
+
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            print(f'______________________PICTURE UPDATE____________________{picture_file}')
+            cur.execute("UPDATE user set image_file = %s where id = %s",(picture_file,session.get("user_id")))
+            con.commit()
+        cur.execute("UPDATE user set username = %s, email = %s where id = %s",(form.username.data,form.email.data,session.get("user_id")))
+        con.commit()
+        flash('Your account has been updated','success')
+        session["username"] = form.username.data
+        session["email"] = form.email.data
+        session["image_file"] = picture_file
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = session.get("username")
+        form.email.data = session.get("email")
+    image_file = url_for('static',filename='profile_pics/'+session.get("image_file"))
+    return render_template('account.html', title='Account', image_file=image_file,form=form)
 
 
 @app.route("/logout")
