@@ -31,8 +31,13 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link" href="{{ url_for('login') }}"><b>Login</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('register') }}"><b>Register</b></a>
+              {% if session.get("user_id") %}
+              <a class="nav-item nav-link" href="{{ url_for('account') }}"><b>Account</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('logout') }}"><b>Logout</b></a>
+              {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('login') }}"><b>Login</b></a>
+                <a class="nav-item nav-link" href="{{ url_for('register') }}"><b>Register</b></a>
+              {% endif %}
             </div>
           </div>
         </div>
