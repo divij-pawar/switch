@@ -1,10 +1,10 @@
 import os
 import secrets
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 import mysql.connector
 from forum import app, bcrypt, login_required,session
-from forum.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from forum.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 
 con = mysql.connector.connect(
     host = "localhost",
@@ -17,31 +17,13 @@ print("__________________Connected to Database__________________")
 #cursor
 cur = con.cursor()
 
-posts = [
-    {
-        'op': 'Divij Pawar',
-        'title': 'BEE book',
-        'content': 'BEE book',
-        'date_posted': 'April 20, 2018'
-    },
-    {
-        'op': 'Prince Sah',
-        'title': 'Drafter',
-        'content': 'Drafter for ED',
-        'date_posted': 'April 21, 2018'
-    },
-    {
-        'op': 'Janhavi Patil',
-        'title': 'Mechanics',
-        'content': 'Dalal Mechanics book first year engineering',
-        'date_posted': 'April 30, 2018'
-    }
-]
-
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', title='Home', posts=posts)
+    cur.execute("SELECT * FROM post")
+    rows = cur.fetchall()
+    print(rows)
+    return render_template('home.html', title='Home', posts=rows)
 
 
 @app.route("/about")
@@ -154,3 +136,64 @@ def logout():
     print("__________________Session Flushed__________________")
     # Redirect user to login form
     return redirect(url_for('login'))
+
+@app.route("/post/new", methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        cur.execute("INSERT into post(title,author,p_descript,price,author_img) VALUES(%s,%s,%s,%s,%s)",
+                    (form.title.data,session.get("username"),form.content.data,500,session.get("image_file")))
+        con.commit()
+        flash("Your post has been created!",'success')
+        return redirect(url_for('home'))
+    return render_template('create_post.html', title='New Post',form=form,
+                             legend= 'New Post')
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
+    post = cur.fetchall()
+    if not post:
+        return ("<h1>404 Not Found</h1>")
+    return render_template('post.html',title=post[0][1],post=post)
+
+@app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
+    post = cur.fetchall()
+    if not post:
+        return ("<h1>404 Not Found</h1>")
+    print("____________________________",post[0][7])
+    if post[0][6] != session.get("username"):
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        cur.execute("UPDATE post set title = %s, p_descript = %s where p_id = %s",
+                    (form.title.data, form.content.data, post_id))
+        con.commit()
+        flash('Your post has been updated!','success')
+        return redirect(url_for('post',post_id=post_id))
+    elif request.method == 'GET':
+        form.title.data = post[0][1]
+        form.content.data = post[0][5]
+    return render_template('create_post.html', title='Update Post',
+                            form=form, legend= 'Update Post' )
+
+
+@app.route("/post/<int:post_id>/delete", methods=['POST'])
+@login_required
+def delete_post(post_id):
+    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
+    post = cur.fetchall()
+    if not post:
+        return ("<h1>404 Not Found</h1>")
+    print("____________________________",post[0][7])
+    if post[0][6] != session.get("username"):
+        abort(403)
+    cur.execute("DELETE from post where p_id=%s",
+                    (post_id,))
+    con.commit()
+    flash('Your post has been deleted!','success')
+    return redirect(url_for('home'))
