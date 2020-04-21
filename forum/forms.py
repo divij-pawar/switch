@@ -70,6 +70,7 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken.Please choose a different one.')
 
 class PostForm(FlaskForm):
-    title = StringField('Title',validators=[DataRequired()])
-    content = TextAreaField('Content',validators=[DataRequired()])
+    title = StringField('Title',validators=[DataRequired(),Length(max=100)])
+    picture = FileField('Upload Picture',validators=[FileAllowed(['jpg','png','jpeg'])])
+    content = TextAreaField('Content',validators=[DataRequired(),Length(max=400)])
     submit = SubmitField('Post')

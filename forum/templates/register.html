@@ -63,7 +63,9 @@
                 {{ form.submit(class="btn btn-dark") }}
             </div>
         </form>
-        <a class="btn btn-light btn-block" href="{{ url_for('login') }}" role="button">Already a User? Sign in here</a>
+        <small class="text-muted">
+                Already a User? <a class="ml-2" href="{{ url_for('login') }}">Sign in here</a>
+        </small>
 
     </div>
 {% endblock content %}

@@ -7,8 +7,14 @@ body {
   background: #fafafa;
   color: #333333;
   margin-top: 5rem;
-}
 
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+html{
+  height: 100%;
+}
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
@@ -85,4 +91,138 @@ a.article-title:hover {
 }
 .about-page{
   width :100%;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* FOOTER */
+
+
+.footer{
+  width: 100vw;
+  display: block;
+  overflow: hidden;
+  padding: 30px 0;
+  margin-top:50px;
+  box-sizing: border-box;
+  background-color: #282d33;
+  margin-top: auto;
+}
+
+.inner_footer{
+  display: block;
+  margin: 0 auto;
+  width: 1100px;
+  height: 100%;
+}
+
+.inner_footer .logo_container{
+  width: 35%;
+  float:left;
+  height: 100%;
+  display:block;
+}
+
+.inner_footer .logo_container img{
+  width: 65px;
+  float:left;
+  height: auto;
+  display:block;
+}
+
+.inner_footer .footer_third{
+  float:right;
+  width: calc(21.6666666667% -20px);
+  margin-right:10px;
+  float: left;
+  height: 100%;
+}
+
+.inner_footer .footer_third:last-child{
+  margin-right: 0;
+}
+
+.inner_footer .footer_third h3{
+  font-family: 'arial';
+  font-size: 16px;
+  color:white;
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.inner_footer .footer_third a{
+  font-family: 'arial';
+  font-size: 10px;
+  color:white;
+  display: block;
+  font-weight: 200px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+}
+
+.inner_footer .footer_third li{
+  display: inline-block;
+  padding: 0 0px;
+  font-size: 20px;
+}
+
+.inner_footer .footer_third span{
+  color: white;
+  font-family: 'arial';
+  font-size:12px;
+  font-weight: 200;
+  display: block;
+  width:100%;
+  padding-top: 20px;
+
+}
+
+@media(max-width:600px){
+  .footer .inner_footer{
+    width:90%;
+
+  }
+  .inner_footer .logo_container,
+  .inner_footer .footer_third{
+    width: 100%;
+    margin-bottom: 30px;
+  }
 }

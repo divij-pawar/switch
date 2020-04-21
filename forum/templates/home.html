@@ -10,7 +10,59 @@
             </div>
             <h2><a class="article-title" href="{{url_for('post',post_id=post[0])}}">{{ post[1] }}</a></h2>
             <p class="article-content">{{ post[5] }}</p>
+            {% if post[2] %}
+            <div class="media content-section ">
+              <img src="{{url_for('static',filename='post_pics/' + post[2])}}" style="width:100%;max-width:950px">
+            </div>
+            {% endif %}
+            <div class="border-top pt-3">
+              <button id="myBtn" type="button" class="btn btn-outline-success btn-sm">Contact Seller</button>
+              <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Hey XIE Switch is a great place to buy college book! &lt;link&gt;" data-related="divijpawar" data-dnt="true" data-show-count="false">
+              Tweet
+              </a>
+              
+            </div>
+              
           </div>
         </article>
     {% endfor %}
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+  </div>
+
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
 {% endblock content %}

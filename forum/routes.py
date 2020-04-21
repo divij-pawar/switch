@@ -73,7 +73,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-def save_picture(form_picture):
+def save_profile_picture(form_picture):
     random_hex= secrets.token_hex(8)
     _,f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
@@ -109,7 +109,7 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
+            picture_file = save_profile_picture(form.picture.data)
             print(f'______________________PICTURE UPDATE____________________{picture_file}')
             cur.execute("UPDATE user set image_file = %s where id = %s",(picture_file,session.get("user_id")))
             con.commit()
@@ -137,13 +137,32 @@ def logout():
     # Redirect user to login form
     return redirect(url_for('login'))
 
+
+def save_post_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/post_pics', picture_fn)
+
+    i = Image.open(form_picture)
+    i.save(picture_path,optimize=True)
+
+    return picture_fn
+
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
     form = PostForm()
+    print(f'______________________PICTURE ADDED TO POST 1____________________{form.picture.data}')
     if form.validate_on_submit():
-        cur.execute("INSERT into post(title,author,p_descript,price,author_img) VALUES(%s,%s,%s,%s,%s)",
-                    (form.title.data,session.get("username"),form.content.data,500,session.get("image_file")))
+        if form.picture.data:
+            print(f'______________________PICTURE ADDED TO POST____________________')
+            picture_file = save_post_picture(form.picture.data)
+            print(f'______________________PICTURE ADDED TO POST____________________{picture_file}')
+        else:
+            picture_file=""
+        cur.execute("INSERT into post(title,image,author,p_descript,price,author_img) VALUES(%s,%s,%s,%s,%s,%s)",
+                    (form.title.data,picture_file,session.get("username"),form.content.data,500,session.get("image_file")))
         con.commit()
         flash("Your post has been created!",'success')
         return redirect(url_for('home'))
@@ -170,6 +189,12 @@ def update_post(post_id):
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_post_picture(form.picture.data)
+            print(f'______________________PICTURE UPDATE____________________{picture_file}')
+            cur.execute("UPDATE post set image = %s where p_id = %s",
+                    (picture_file, post_id))            
+            con.commit()
         cur.execute("UPDATE post set title = %s, p_descript = %s where p_id = %s",
                     (form.title.data, form.content.data, post_id))
         con.commit()
@@ -192,8 +217,18 @@ def delete_post(post_id):
     print("____________________________",post[0][7])
     if post[0][6] != session.get("username"):
         abort(403)
-    cur.execute("DELETE from post where p_id=%s",
-                    (post_id,))
+    cur.execute("DELETE from post where p_id=%s",(post_id,))
     con.commit()
     flash('Your post has been deleted!','success')
     return redirect(url_for('home'))
+'''
+@app.route("/user/<str:username>")
+def user_posts(username):
+    cur.execute("SELECT * FROM post where author=%s LIMIT 1",(username,))
+    posts = cur.fetchall()
+    if not post:
+        return ("<h1>404 Not Found</h1>")
+    print("____________________________",post[0][7])
+    print(rows)
+    return render_template('user.html', title='Home', posts=posts)
+'''

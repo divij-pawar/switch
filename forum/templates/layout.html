@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='form.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='fontawesome.min.css') }}">
+
     {% if title %}
         <title>Switch - {{ title }}</title>
         <link rel="shortcut icon" type="image/ico" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -27,14 +29,12 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('home') }}"><b>Home</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('about') }}"><b>About</b></a>
-            </div>
             <!-- Navbar Right Side -->
-            <div class="navbar-nav">
+            <div class="navbar-nav ml-auto">
               {% if session.get("user_id") %}
-              <a class="nav-item nav-link" href="{{ url_for('new_post') }}"><b>New Post</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('account') }}"><img src="{{url_for('static',filename='profile_pics/' + session.get("image_file"))}}" class="img-responsive rounded-circle" ><b>{{session.get("username")}}</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('home') }}"><b>Home</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('new_post') }}"><b>Post Ad</b></a>
               <a class="nav-item nav-link" href="{{ url_for('account') }}"><b>Account</b></a>
               <a class="nav-item nav-link" href="{{ url_for('logout') }}"><b>Logout</b></a>
               {% else %}
@@ -47,7 +47,8 @@
       </nav>
     </header>
     <main role="main" class="container">
-      <div class="col">
+      <div class="row">
+        <div class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
@@ -57,17 +58,64 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-
           {% block content %}{% endblock %}
         </div>
+        {% if session.get("user_id") %}
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Your Sidebar</h3>
+            <p class='text-muted'>You can put any information here you'd like.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Your Posts</li>
+                <li class="list-group-item list-group-item-light"><a href="{{ url_for('about') }}">About</a></li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">Support us on Twitter!
+                  <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Hey XIE Switch is a great place to buy college book! &lt;link&gt;" data-related="divijpawar" data-dnt="true" data-show-count="false">
+                  Tweet
+                  </a>
+              </ul>
+            </p>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </main>
-
+    <div class="footer">
+      <div class="inner_footer">
+        <div class="logo_container">
+            <img src="{{ url_for('static',filename='switch.png') }}" >
+        </div>
+        <div class="footer_third">
+          <h3>Need Help?</h3>
+          <a href="#">Terms &amp; Conditions</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+        <div class="footer_third">
+            <h3>Need Help?</h3>
+            <a href="#">Terms &amp; Conditions</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+          <div class="footer_third">
+              <h3>Contact us</h3>
+              <span>
+                  &copy; Divij Pawar<br>
+                  2601  West Street<br>
+                  Kentwood<br>
+                  Michigan-49512
+              </span>
+              <li><a=href="#"></i></a></li>
+              
+          </div>
+      </div>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v6.0"></script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </body>
 </html>
