@@ -22,10 +22,23 @@
                     {{ form.picture.label() }}
                     {{ form.picture(class="form-control-file") }}
                     {% if form.picture.errors %}
-                        {% for error in form.email.errors %}
+                        {% for error in form.picture.errors %}
                             <span class="test-danger">{{ error }}</span></br>
                         {% endfor %}
                     {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.price.label(class="form-control-label") }}
+                {% if form.price.errors %}
+                    {{ form.price(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.price.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.price(class="form-control form-control-lg") }}
+                {% endif %}
             </div>
             <div class="form-group">
                 {{ form.content.label(class="form-control-label") }}

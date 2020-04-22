@@ -46,7 +46,7 @@ def login():
             print("__________________Account Auth Successfull__________________")
             session["user_id"] = rows[0][0]
             session["username"] = rows[0][1]
-            session["name"] = rows[0][2]
+            session["fname"] = rows[0][2]
             session["email"] = rows[0][3]
             session["image_file"] = rows[0][5]
             flash(f'Welcome {rows[0][1]}!', 'success')
@@ -66,7 +66,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         print(f"__________________{form.username.data} {form.email.data}__________________")
-        cur.execute("INSERT INTO user (username,name,email,password) VALUES(%s,'Users Name', %s, %s)",
+        cur.execute("INSERT INTO user (username,fname,lname,email,password) VALUES(%s,'First Name','Last Name', %s, %s)",
                     (form.username.data, form.email.data,hashed_password))
         con.commit()
         flash('Your account has been created! You are now able to log in', 'success')
@@ -113,12 +113,12 @@ def account():
             print(f'______________________PICTURE UPDATE____________________{picture_file}')
             cur.execute("UPDATE user set image_file = %s where id = %s",(picture_file,session.get("user_id")))
             con.commit()
+            session["image_file"] = picture_file
         cur.execute("UPDATE user set username = %s, email = %s where id = %s",(form.username.data,form.email.data,session.get("user_id")))
         con.commit()
         flash('Your account has been updated','success')
         session["username"] = form.username.data
         session["email"] = form.email.data
-        session["image_file"] = picture_file
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = session.get("username")
@@ -153,16 +153,14 @@ def save_post_picture(form_picture):
 @login_required
 def new_post():
     form = PostForm()
-    print(f'______________________PICTURE ADDED TO POST 1____________________{form.picture.data}')
     if form.validate_on_submit():
         if form.picture.data:
-            print(f'______________________PICTURE ADDED TO POST____________________')
             picture_file = save_post_picture(form.picture.data)
             print(f'______________________PICTURE ADDED TO POST____________________{picture_file}')
         else:
             picture_file=""
         cur.execute("INSERT into post(title,image,author,p_descript,price,author_img) VALUES(%s,%s,%s,%s,%s,%s)",
-                    (form.title.data,picture_file,session.get("username"),form.content.data,500,session.get("image_file")))
+                    (form.title.data,picture_file,session.get("username"),form.content.data,form.price.data,session.get("image_file")))
         con.commit()
         flash("Your post has been created!",'success')
         return redirect(url_for('home'))
@@ -214,7 +212,6 @@ def delete_post(post_id):
     post = cur.fetchall()
     if not post:
         return ("<h1>404 Not Found</h1>")
-    print("____________________________",post[0][7])
     if post[0][6] != session.get("username"):
         abort(403)
     cur.execute("DELETE from post where p_id=%s",(post_id,))

@@ -8,15 +8,26 @@
               <a class="mr-2" href="#">{{ post[6]}}</a>
               <small class="text-muted">{{ post[4].strftime('posted on %d %b %Y at %-I:%-M%p')}}</small>
             </div>
-            <h2><a class="article-title" href="{{url_for('post',post_id=post[0])}}">{{ post[1] }}</a></h2>
+            <h2><a class="article-title" href="{{url_for('post',post_id=post[0])}}">{{ post[1] }}</a><h6><b>Price: Rs. {{ post[3] }}</b></h6></h2>
+
             <p class="article-content">{{ post[5] }}</p>
             {% if post[2] %}
             <div class="media content-section ">
-              <img src="{{url_for('static',filename='post_pics/' + post[2])}}" style="width:100%;max-width:950px">
+              <img src="{{url_for('static',filename='post_pics/' + post[2])}}" style="max-width:950px;height:100%;max-height:300px">
             </div>
             {% endif %}
             <div class="border-top pt-3">
               <button id="myBtn" type="button" class="btn btn-outline-success btn-sm">Contact Seller</button>
+              <!-- The Modal -->
+              <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>Seller Info</p>
+                </div>
+
+              </div>
               <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Hey XIE Switch is a great place to buy college book! &lt;link&gt;" data-related="divijpawar" data-dnt="true" data-show-count="false">
               Tweet
               </a>
@@ -26,17 +37,17 @@
           </div>
         </article>
     {% endfor %}
+    {% if not posts %}
+      <div class="media content-section">
+      <div>
+      <h4>XIE Switch is a local marketplace for your institution </h4>
+      </div>
+      <img src="{{url_for('static',filename='books.jpg')}}" style="width:100%;max-width:350px">
+      </div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
+    {% endif %}
 
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
-  </div>
 
-</div>
 
 <script>
 // Get the modal

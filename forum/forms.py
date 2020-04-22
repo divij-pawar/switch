@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,Regexp
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,Regexp, NumberRange
 
 import mysql.connector
 from forum import session
@@ -72,5 +72,8 @@ class UpdateAccountForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Title',validators=[DataRequired(),Length(max=100)])
     picture = FileField('Upload Picture',validators=[FileAllowed(['jpg','png','jpeg'])])
+    price = IntegerField('Price (Rs.)',validators=[DataRequired(),NumberRange(0,10000,"Invalid Price,please add between 0 and 10000")])
     content = TextAreaField('Content',validators=[DataRequired(),Length(max=400)])
     submit = SubmitField('Post')
+
+

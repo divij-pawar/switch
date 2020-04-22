@@ -4,5 +4,6 @@ mysql.docx
 college project.code-workspace
 *.pyc
 work.txt
-static/post_pics/
-static/profile_pics/
+post_pics/
+profile_pics/
+*.gitignore

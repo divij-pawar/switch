@@ -77,7 +77,20 @@
             </p>
           </div>
         </div>
+        {% else %}
+        <div class="col-md-4">
+          <div class="content-section">
+            <p>
+              <h5><b>Meet sellers and buyers through are unique platform </b></h5>
+              Help yourself get rid of the old college material you have.</h6>
+              <br>
+              
+            </p>
+          </div>
+          <h5>    Hop on the trend, Join us <a href="{{ url_for('register') }}">Now!</a></h5>
+        </div>
         {% endif %}
+
       </div>
     </main>
     <div class="footer">
@@ -91,9 +104,9 @@
           <a href="#">Privacy Policy</a>
         </div>
         <div class="footer_third">
-            <h3>Need Help?</h3>
-            <a href="#">Terms &amp; Conditions</a>
-            <a href="#">Privacy Policy</a>
+            <h3>Additional Link</h3>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="#">Report</a>
         </div>
           <div class="footer_third">
               <h3>Contact us</h3>
