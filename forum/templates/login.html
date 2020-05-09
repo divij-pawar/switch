@@ -31,6 +31,10 @@
                         {{ form.password(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <div class="col-5">
+                    {{ form.remember(class="form-check-input") }}
+                    {{ form.remember.label(class="form-check-label") }}
+                </div>
                 <small class="text-muted ml-2">
                         <a href="#">Forgot Password?</a>
                 </small>

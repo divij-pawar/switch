@@ -7,3 +7,4 @@ work.txt
 post_pics/
 profile_pics/
 *.gitignore
+*.db

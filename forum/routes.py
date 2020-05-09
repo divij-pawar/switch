@@ -2,28 +2,17 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-import mysql.connector
-from forum import app, bcrypt, login_required,session
+from forum import app, db, bcrypt
 from forum.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-
-con = mysql.connector.connect(
-    host = "localhost",
-    user = "dev",
-    password = "password",
-    database = "forum",
-    port = 3306
-)
-print("__________________Connected to Database__________________")
-#cursor
-cur = con.cursor()
+from forum.models import User, Post
+from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route("/")
 @app.route("/home")
 def home():
-    cur.execute("SELECT * FROM post")
-    rows = cur.fetchall()
-    print(rows)
-    return render_template('home.html', title='Home', posts=rows)
+    posts = Post.query.all()
+    print(posts)
+    return render_template('home.html', posts=posts)
 
 
 @app.route("/about")
@@ -33,24 +22,19 @@ def about():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if session.get("user_id"):
-        print("______________Session:",session)
-        return redirect(url_for('home'))    
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
     form = LoginForm()
     if form.validate_on_submit():
         print("__________________VALIDATED__________________")
-        #if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-        cur.execute("SELECT * FROM user where email=%s LIMIT 1",(form.email.data,))
-        rows = cur.fetchall()
-        if rows and bcrypt.check_password_hash(rows[0][4],form.password.data):
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
             print("__________________Account Auth Successfull__________________")
-            session["user_id"] = rows[0][0]
-            session["username"] = rows[0][1]
-            session["fname"] = rows[0][2]
-            session["email"] = rows[0][3]
-            session["image_file"] = rows[0][5]
-            flash(f'Welcome {rows[0][1]}!', 'success')
-            #flash('You have been logged in!', 'success')
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+            flash(f'Welcome {current_user.username}!', 'success')
             return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -60,15 +44,16 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    if session.get("user_id"):
+    if current_user.is_authenticated:
         return redirect(url_for('home'))
+    
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         print(f"__________________{form.username.data} {form.email.data}__________________")
-        cur.execute("INSERT INTO user (username,fname,lname,email,password) VALUES(%s,'First Name','Last Name', %s, %s)",
-                    (form.username.data, form.email.data,hashed_password))
-        con.commit()
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -110,29 +95,24 @@ def account():
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_profile_picture(form.picture.data)
-            print(f'______________________PICTURE UPDATE____________________{picture_file}')
-            cur.execute("UPDATE user set image_file = %s where id = %s",(picture_file,session.get("user_id")))
-            con.commit()
-            session["image_file"] = picture_file
-        cur.execute("UPDATE user set username = %s, email = %s where id = %s",(form.username.data,form.email.data,session.get("user_id")))
-        con.commit()
+            current_user.image_file = picture_file
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
         flash('Your account has been updated','success')
-        session["username"] = form.username.data
-        session["email"] = form.email.data
         return redirect(url_for('account'))
+
     elif request.method == 'GET':
-        form.username.data = session.get("username")
-        form.email.data = session.get("email")
-    image_file = url_for('static',filename='profile_pics/'+session.get("image_file"))
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static',filename='profile_pics/'+current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file,form=form)
 
 
 @app.route("/logout")
 def logout():
-    """Log user out"""
-
-    # Forget any user_id
-    session.clear()
+    logout_user()
     print("__________________Session Flushed__________________")
     # Redirect user to login form
     return redirect(url_for('login'))
@@ -159,9 +139,9 @@ def new_post():
             print(f'______________________PICTURE ADDED TO POST____________________{picture_file}')
         else:
             picture_file=""
-        cur.execute("INSERT into post(title,image,author,p_descript,price,author_img) VALUES(%s,%s,%s,%s,%s,%s)",
-                    (form.title.data,picture_file,session.get("username"),form.content.data,form.price.data,session.get("image_file")))
-        con.commit()
+        post = Post(title=form.title.data,image_file = picture_file, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
         flash("Your post has been created!",'success')
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post',form=form,
@@ -169,38 +149,30 @@ def new_post():
 
 @app.route("/post/<int:post_id>")
 def post(post_id):
-    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
-    post = cur.fetchall()
-    if not post:
-        return ("<h1>404 Not Found</h1>")
-    return render_template('post.html',title=post[0][1],post=post)
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
-    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
-    post = cur.fetchall()
-    if not post:
-        return ("<h1>404 Not Found</h1>")
-    print("____________________________",post[0][7])
-    if post[0][6] != session.get("username"):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_post_picture(form.picture.data)
             print(f'______________________PICTURE UPDATE____________________{picture_file}')
-            cur.execute("UPDATE post set image = %s where p_id = %s",
-                    (picture_file, post_id))            
-            con.commit()
-        cur.execute("UPDATE post set title = %s, p_descript = %s where p_id = %s",
-                    (form.title.data, form.content.data, post_id))
-        con.commit()
+        post.title = form.title.data
+        post.image_file = picture_file
+        post.content = form.content.data
+        db.session.commit()
         flash('Your post has been updated!','success')
         return redirect(url_for('post',post_id=post_id))
+
     elif request.method == 'GET':
-        form.title.data = post[0][1]
-        form.content.data = post[0][5]
+        form.title.data = post.title
+        form.content.data = post.content
     return render_template('create_post.html', title='Update Post',
                             form=form, legend= 'Update Post' )
 
@@ -208,14 +180,11 @@ def update_post(post_id):
 @app.route("/post/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):
-    cur.execute("SELECT * FROM post where p_id=%s",(post_id,))
-    post = cur.fetchall()
-    if not post:
-        return ("<h1>404 Not Found</h1>")
-    if post[0][6] != session.get("username"):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
         abort(403)
-    cur.execute("DELETE from post where p_id=%s",(post_id,))
-    con.commit()
+    db.session.delete(post)
+    db.session.commit()
     flash('Your post has been deleted!','success')
     return redirect(url_for('home'))
 '''
