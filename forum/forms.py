@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DecimalField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp, NumberRange
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Regexp, NumberRange, Optional
 from forum.models import User
 
 class RegistrationForm(FlaskForm):
@@ -34,8 +34,8 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired(), Length(min=3, max=15),
                             Regexp('^\w+$', message="Username must contain only letters numbers or underscore")])
     email = StringField('Email',validators=[DataRequired(), Email()])
-    fname = StringField('First Name',validators=[Length(min=0, max=50), Regexp('^\w+$', message="name must contain only letters numbers")])
-    lname = StringField('Last Name',validators=[Length(min=0, max=50), Regexp('^\w+$', message="name must contain only letters numbers")])
+    fname = StringField('First Name',validators=[Optional(), Length(min=0, max=50), Regexp('^\w+$', message="name must contain only letters numbers")])
+    lname = StringField('Last Name',validators=[Optional(), Length(min=0, max=50), Regexp('^\w+$', message="name must contain only letters numbers")])
     picture = FileField('Update Profile Picture',validators=[FileAllowed(['jpg','png','jpeg'])])
     submit = SubmitField('Save Changes')
 
@@ -54,6 +54,6 @@ class UpdateAccountForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Title',validators=[DataRequired(),Length(max=100)])
     picture = FileField('Upload Picture',validators=[FileAllowed(['jpg','png','jpeg'])])
-    price = DecimalField('Price (₹)',rounding=None, places=2,validators=[DataRequired(), NumberRange(0,10000,"Invalid Price,please add between 0 and 10000")])
+    price = DecimalField('Price (₹)',rounding=None, places=2,validators=[DataRequired(), NumberRange(min=0,max=10000,message="Invalid Price,please add between 0 and 10000")])
     content = TextAreaField('Content',validators=[DataRequired(),Length(max=400)])
     submit = SubmitField('Post')

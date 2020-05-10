@@ -10,7 +10,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/")
 @app.route("/home")
 def home():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template('home.html', posts=posts)
 
 
@@ -45,7 +46,7 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    
+    logout_user()
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -96,13 +97,13 @@ def account():
             picture_file = save_profile_picture(form.picture.data)
             current_user.image_file = picture_file
         if form.fname.data:
-            current_user.fname = strip(form.fname.data)
+            current_user.fname = form.fname.data
         
         if form.lname.data:
-            current_user.lname = strip(form.lname.data)
+            current_user.lname = form.lname.data
 
-        current_user.username = strip(form.username.data)
-        current_user.email = strip(form.email.data)
+        current_user.username = form.username.data
+        current_user.email = form.email.data
         db.session.commit()
         flash('Your account has been updated','success')
         return redirect(url_for('account'))
@@ -195,14 +196,12 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!','success')
     return redirect(url_for('home'))
-'''
-@app.route("/user/<str:username>")
+
+@app.route("/user/<string:username>")
 def user_posts(username):
-    cur.execute("SELECT * FROM post where author=%s LIMIT 1",(username,))
-    posts = cur.fetchall()
-    if not post:
-        return ("<h1>404 Not Found</h1>")
-    print("____________________________",post[0][7])
-    print(rows)
-    return render_template('user.html', title='Home', posts=posts)
-'''
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template('user_posts.html', posts=posts, user=user)

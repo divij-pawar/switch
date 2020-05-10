@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in posts %}
+    {% for post in posts.items %}
         <article class="media content-section">
           <img class="rounded-circle article-img" src="{{ url_for('static',filename='profile_pics/' + post.author.image_file) }}">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.author.username }}</a>
+              <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
               <small class="text-muted">{{ post.date_posted.strftime('posted on %d %b %Y at %-I:%-M%p') }}</small>
             </div>
             <div class="post-title">
@@ -14,7 +14,7 @@
             <p class="article-content">{{ post.content }}</p>
             {% if post.image_file %}
             <div class="media content-section ">
-              <img src="{{ url_for('static',filename='post_pics/' + post.image_file) }}" style="max-width:950px;height:100%;max-height:300px">
+              <img src="{{ url_for('static',filename='post_pics/' + post.image_file) }}" style="max-width:550px;max-height:300px">
             </div>
             {% endif %}
             <div class="border-top pt-3">
@@ -34,10 +34,21 @@
               </a>
               
             </div>
-              
           </div>
         </article>
     {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+          {% if posts.page == page_num %}
+            <a class="btn btn-dark mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+          {% else %}
+            <a class="btn btn-outline-dark mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+        ...
+        {% endif %}
+    {% endfor %}
+
     {% if not posts %}
       <div class="media content-section">
       <div>
