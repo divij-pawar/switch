@@ -96,13 +96,13 @@ def account():
             picture_file = save_profile_picture(form.picture.data)
             current_user.image_file = picture_file
         if form.fname.data:
-            current_user.fname = form.fname.data
+            current_user.fname = strip(form.fname.data)
         
         if form.lname.data:
-            current_user.lname = form.lname.data
+            current_user.lname = strip(form.lname.data)
 
-        current_user.username = form.username.data
-        current_user.email = form.email.data
+        current_user.username = strip(form.username.data)
+        current_user.email = strip(form.email.data)
         db.session.commit()
         flash('Your account has been updated','success')
         return redirect(url_for('account'))
@@ -169,8 +169,8 @@ def update_post(post_id):
         if form.picture.data:
             picture_file = save_post_picture(form.picture.data)
             print(f'______________________PICTURE UPDATE____________________{picture_file}')
+            post.image_file = picture_file
         post.title = form.title.data
-        post.image_file = picture_file
         post.price = form.price.data
         post.content = form.content.data
         db.session.commit()
@@ -180,6 +180,7 @@ def update_post(post_id):
     elif request.method == 'GET':
         form.title.data = post.title
         form.content.data = post.content
+        form.price.data = post.price
     return render_template('create_post.html', title='Update Post',
                             form=form, legend= 'Update Post' )
 

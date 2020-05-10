@@ -5,7 +5,7 @@
           <img class="rounded-circle account-img" src="{{ image_file }}">
           <div class="media-body">
             <h2 class="account-heading">{{ current_user.username }}</h2>
-            <p class="text-secondary">{{ current_user.fname }}{{ current_user.lname }}<br>{{ current_user.email }}</p>
+            <p class="text-secondary">{{ current_user.fname }}&nbsp;{{ current_user.lname }}<br>{{ current_user.email }}</p>
           </div>
         </div>
         <form method="POST" action="" enctype="multipart/form-data">
@@ -29,9 +29,12 @@
                 <div class="form-group">
                     {{ form.fname.label() }}
                     {% if form.fname.errors %}
+                        {{ form.fname(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
                         {% for error in form.fname.errors %}
-                            <span class="test-danger">{{ error }}</span></br>
+                            <span>{{ error }}</span></br>
                         {% endfor %}
+                        </div>
                     {% else %}
                         {{ form.fname(class="form-control form-control-lg") }}
                     {% endif %}
@@ -39,9 +42,12 @@
                 <div class="form-group">
                     {{ form.lname.label() }}
                     {% if form.lname.errors %}
-                        {% for error in form.lname.errors %}
-                            <span class="test-danger">{{ error }}</span></br>
-                        {% endfor %}
+                    {{ form.lname(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                    {% for error in form.lname.errors %}
+                        <span>{{ error }}</span></br>
+                    {% endfor %}
+                    </div>
                     {% else %}
                         {{ form.lname(class="form-control form-control-lg") }}
                     {% endif %}
@@ -61,11 +67,15 @@
                 </div> 
                 <div class="form-group">
                     {{ form.picture.label() }}
-                    {{ form.picture(class="form-control-file") }}
                     {% if form.picture.errors %}
+                        {{ form.picture(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
                         {% for error in form.picture.errors %}
-                            <span class="test-danger">{{ error }}</span></br>
+                            <span>{{ error }}</span></br>
                         {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.picture(class="form-control") }}
                     {% endif %}
                 </div>
             </fieldset>

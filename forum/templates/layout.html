@@ -32,7 +32,7 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav ml-auto">
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('account') }}"><img src="{{url_for('static',filename='profile_pics/' + current_user.image_file)}}" class="img-responsive rounded-circle" ><b>{{ current_user.username }}</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('account') }}"><img src="{{url_for('static',filename='profile_pics/' + current_user.image_file)}}" class="img-responsive rounded-circle" >&nbsp;<b>{{ current_user.username }}</b></a>
               <a class="nav-item nav-link" href="{{ url_for('home') }}"><b>Home</b></a>
               <a class="nav-item nav-link" href="{{ url_for('new_post') }}"><b>Post Ad</b></a>
               <a class="nav-item nav-link" href="{{ url_for('account') }}"><b>Account</b></a>

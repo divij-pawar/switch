@@ -9,7 +9,7 @@
               <small class="text-muted">{{ post.date_posted.strftime('posted on %d %b %Y at %-I:%-M%p') }}</small>
             </div>
             <div class="post-title">
-            <h5><a class="article-title" href="{{ url_for('post',post_id=post.id ) }}">{{ post.title }}</a></h5><small><b>Price: Rs. {{ post.price }}</b></small>
+            <h5><a class="article-title" href="{{ url_for('post',post_id=post.id ) }}">{{ post.title }}</a></h5><small><b>Price: ₹ {{ post.price }}</b></small>
             </div>
             <p class="article-content">{{ post.content }}</p>
             {% if post.image_file %}
@@ -25,7 +25,7 @@
                 <!-- Modal content -->
                 <div class="modal-content">
                   <span class="close">&times;</span>
-                  <p>Seller Info : post.author.email</p>
+                  <p>Seller Info : {{ post.author.email }}</p>
                 </div>
 
               </div>
