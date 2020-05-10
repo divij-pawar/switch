@@ -73,6 +73,9 @@ a.article-title:hover {
   text-decoration: none;
 }
 
+.post-title{
+  display: inline-block;
+}
 .article-svg {
   width: 25px;
   height: 25px;

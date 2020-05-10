@@ -3,7 +3,7 @@ dependencies.txt
 mysql.docx
 college project.code-workspace
 *.pyc
-work.txt
+*.txt
 post_pics/
 profile_pics/
 *.gitignore
