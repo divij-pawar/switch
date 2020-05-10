@@ -34,6 +34,8 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired(), Length(min=3, max=15),
                             Regexp('^\w+$', message="Username must contain only letters numbers or underscore")])
     email = StringField('Email',validators=[DataRequired(), Email()])
+    fname = StringField('First Name',validators=[Length(min=1, max=50)])
+    lname = StringField('Last Name',validators=[Length(min=1, max=50)])
     picture = FileField('Update Profile Picture',validators=[FileAllowed(['jpg','png','jpeg'])])
     submit = SubmitField('Save Changes')
 

@@ -7,7 +7,7 @@
                 <a class="mr-2" href="#">{{ post.author.username }}</a>
                 <small class="text-muted">{{ post.date_posted.strftime('posted on %d %b %Y at %-I:%-M%p')}}</small>
             </div>
-        <h2 class-"article-title">{{ post.title }}<h6><b>Price: Rs. #</b></h6></h2>
+        <h2 class-"article-title">{{ post.title }}<h6><b>Price: Rs. {{ post.price }}</b></h6></h2>
         <p class="article-content">{{ post.content }}</p>
         {% if post.image_file %}
         <div class="media content-section ">

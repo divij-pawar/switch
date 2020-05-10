@@ -95,6 +95,11 @@ def account():
         if form.picture.data:
             picture_file = save_profile_picture(form.picture.data)
             current_user.image_file = picture_file
+        if form.fname.data:
+            current_user.fname = form.fname.data
+        
+        if form.lname.data:
+            current_user.lname = form.lname.data
 
         current_user.username = form.username.data
         current_user.email = form.email.data
@@ -105,6 +110,8 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.lname.data = current_user.lname
+        form.fname.data = current_user.fname
     image_file = url_for('static',filename='profile_pics/'+current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file,form=form)
 
@@ -138,7 +145,7 @@ def new_post():
             print(f'______________________PICTURE ADDED TO POST____________________{picture_file}')
         else:
             picture_file=""
-        post = Post(title=form.title.data,image_file = picture_file, content=form.content.data, author=current_user)
+        post = Post(title=form.title.data,image_file = picture_file, price = form.price.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash("Your post has been created!",'success')
@@ -164,6 +171,7 @@ def update_post(post_id):
             print(f'______________________PICTURE UPDATE____________________{picture_file}')
         post.title = form.title.data
         post.image_file = picture_file
+        post.price = form.price.data
         post.content = form.content.data
         db.session.commit()
         flash('Your post has been updated!','success')
