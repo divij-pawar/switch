@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <h1>Something went wrong.... (500)</h1>
+        <p>We are experiencing some trouble on our end. Please try again later</p><br>
+        <img src="{{ url_for('static',filename='panda.jpg') }}" style="max-width:400px">
+        <h3>Sorry TwT</h3>
+    </div>
+
+
+{% endblock content %}

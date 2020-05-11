@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <h1>Not Yours! <img src="{{ url_for('static',filename='anger.png') }}" style="max-width:50px"></h1>
+        <p>
+            <h2>Please check your account and try again</h2>
+            <h5>(403:FORBIDDEN)</h5>
+        </p>
+    </div>
+
+
+{% endblock content %}
