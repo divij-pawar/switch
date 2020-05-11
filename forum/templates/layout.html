@@ -23,8 +23,8 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-n1" href="{{ url_for('home') }}"><b>XIE Switch</b></a>
-          <a href="{{ url_for('home') }}"><img src="{{ url_for('static',filename='switch.png') }}" class="img-responsive mr-4" ></a>
+          <a class="navbar-brand mr-n1" href="{{ url_for('main.home') }}"><b>XIE Switch</b></a>
+          <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static',filename='switch.png') }}" class="img-responsive mr-4" ></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -32,14 +32,14 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav ml-auto">
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('user_posts', username=current_user.username) }}"><img src="{{url_for('static',filename='profile_pics/' + current_user.image_file)}}" class="img-responsive rounded-circle" >&nbsp;<b>{{ current_user.username }}</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('home') }}"><b>Home</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('new_post') }}"><b>Post Ad</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('account') }}"><b>Account</b></a>
-              <a class="nav-item nav-link" href="{{ url_for('logout') }}"><b>Logout</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('users.user_posts', username=current_user.username) }}"><img src="{{url_for('static',filename='profile_pics/' + current_user.image_file)}}" class="img-responsive rounded-circle" >&nbsp;<b>{{ current_user.username }}</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('main.home') }}"><b>Home</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}"><b>Post Ad</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('users.account') }}"><b>Account</b></a>
+              <a class="nav-item nav-link" href="{{ url_for('users.logout') }}"><b>Logout</b></a>
               {% else %}
-                <a class="nav-item nav-link" href="{{ url_for('login') }}"><b>Login</b></a>
-                <a class="nav-item nav-link" href="{{ url_for('register') }}"><b>Register</b></a>
+                <a class="nav-item nav-link" href="{{ url_for('users.login') }}"><b>Login</b></a>
+                <a class="nav-item nav-link" href="{{ url_for('users.register') }}"><b>Register</b></a>
               {% endif %}
             </div>
           </div>
@@ -67,7 +67,7 @@
             <p class='text-muted'>You can put any information here you'd like.
               <ul class="list-group">
                 <li class="list-group-item list-group-item-light">Your Posts</li>
-                <li class="list-group-item list-group-item-light"><a href="{{ url_for('about') }}">About</a></li>
+                <li class="list-group-item list-group-item-light"><a href="{{ url_for('main.about') }}">About</a></li>
                 <li class="list-group-item list-group-item-light">Calendars</li>
                 <li class="list-group-item list-group-item-light">Support us on Twitter!
                   <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Hey XIE Switch is a great place to buy college book! &lt;link&gt;" data-related="divijpawar" data-dnt="true" data-show-count="false">
@@ -87,7 +87,7 @@
               
             </p>
           </div>
-          &emsp; Hop on the trend, Join us <a href="{{ url_for('register') }}">Now!</a>
+          &emsp; Hop on the trend, Join us <a href="{{ url_for('users.register') }}">Now!</a>
         </div>
         {% endif %}
 
@@ -105,7 +105,7 @@
         </div>
         <div class="footer_third">
             <h3>Additional Link</h3>
-            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('main.about') }}">About</a>
             <a href="#">Report</a>
         </div>
           <div class="footer_third">
