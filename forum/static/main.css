@@ -3,6 +3,9 @@
     width: auto;
     max-height: 25px;
 }
+main{
+  min-height: 100vh;
+}
 body {
   background: #fafafa;
   color: #333333;
@@ -42,7 +45,18 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 3px;
   margin-bottom: 20px;
 }
-
+.remember input{
+  box-shadow: none;
+  
+}
+.post-img img{
+  max-width:550px;
+  max-height:300px;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
 .article-title {
   color: #444444;
 }
@@ -75,6 +89,7 @@ a.article-title:hover {
 
 .post-title{
   display: inline-block;
+  margin-top: 5px;
 }
 .article-svg {
   width: 25px;
@@ -100,20 +115,23 @@ a.article-title:hover {
 
 
 .footer{
-  width: 100vw;
   display: block;
   overflow: hidden;
-  padding: 30px 0;
-  margin-top:50px;
+  padding: 30px;
+  margin-top:2vh;
   box-sizing: border-box;
   background-color: #282d33;
-  margin-top: auto;
+  position: relative;
+  left:0px;
+  bottom:0px;
+  height:165px;
+  width:100%;
 }
 
 .inner_footer{
-  display: block;
-  margin: 0 auto;
-  width: 1100px;
+  display: flex;
+  margin: 0 4%;
+  width: 90%;
   height: 100%;
 }
 
@@ -125,16 +143,17 @@ a.article-title:hover {
 }
 
 .inner_footer .logo_container img{
-  width: 65px;
+  width: 20%;
   float:left;
   height: auto;
   display:block;
+  margin-left: 50%;
 }
 
 .inner_footer .footer_third{
   float:right;
   width: calc(21.6666666667% -20px);
-  margin-right:10px;
+  margin-right:20px;
   float: left;
   height: 100%;
 }
@@ -145,7 +164,7 @@ a.article-title:hover {
 
 .inner_footer .footer_third h3{
   font-family: 'arial';
-  font-size: 16px;
+  font-size: 20px;
   color:white;
   display: block;
   width: 100%;
@@ -154,12 +173,12 @@ a.article-title:hover {
 
 .inner_footer .footer_third a{
   font-family: 'arial';
-  font-size: 10px;
+  font-size: 13px;
   color:white;
   display: block;
   font-weight: 200px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   padding-bottom: 5px;
 }
 
@@ -172,11 +191,10 @@ a.article-title:hover {
 .inner_footer .footer_third span{
   color: white;
   font-family: 'arial';
-  font-size:12px;
+  font-size:14px;
   font-weight: 200;
   display: block;
   width:100%;
-  padding-top: 20px;
 
 }
 
@@ -190,4 +208,66 @@ a.article-title:hover {
     width: 100%;
     margin-bottom: 30px;
   }
+}
+
+body {
+    overflow-x: hidden; //horizontal
+}
+
+/* Contact Seller Floater */
+.contact-float{
+  display:none;
+  width: 20%;
+  height: 15%;
+  position: fixed;
+  margin-left: 20%;
+  margin-right: auto;
+  margin-top:15%;
+  background-color: white;
+  box-shadow: 0px 0px 20px 10px #0000004d;
+  border-radius: 8px;
+}
+
+.contact-btn{
+  position: sticky;
+  background-color: #333333;
+  color: white;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.contact-display{
+  display:block;
+
+}
+.contact-exit{
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+}
+.contact-exit:hover {
+  opacity: 1;
+}
+.contact-exit:before, .contact-exit:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 20px;
+  width: 2px;
+  background-color: #333;
+}
+.contact-exit:before {
+  transform: rotate(45deg);
+}
+.contact-exit:after {
+  transform: rotate(-45deg);
+}
+.float-content{
+  text-align: center;
+  margin: 10%;
+  font-size: 15px;
+  font-weight: 500;
 }

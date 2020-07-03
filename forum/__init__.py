@@ -22,7 +22,6 @@ def create_app(config_all=Config):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-
     from forum.users.routes import users
     from forum.posts.routes import posts
     from forum.main.routes import main
@@ -31,6 +30,7 @@ def create_app(config_all=Config):
     app.register_blueprint(posts)
     app.register_blueprint(main)
     app.register_blueprint(errors)
-
+    with app.app_context():
+        db.create_all()
     return app
 

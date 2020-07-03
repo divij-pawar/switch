@@ -1,91 +1,59 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in posts.items %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ url_for('static',filename='profile_pics/' + post.author.image_file) }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
-              <small class="text-muted">{{ post.date_posted.strftime('posted on %d %b %Y at %-I:%-M%p') }}</small>
-            </div>
-            <div class="post-title">
-            <h5><a class="article-title" href="{{ url_for('posts.post',post_id=post.id ) }}">{{ post.title }}</a></h5><small><b>Price: ₹ {{ post.price }}</b></small>
-            </div>
-            <p class="article-content">{{ post.content }}</p>
-            {% if post.image_file %}
-            <div class="media content-section ">
-              <img src="{{ url_for('static',filename='post_pics/' + post.image_file) }}" style="max-width:550px;max-height:300px">
-            </div>
-            {% endif %}
-            <div class="border-top pt-3">
-              <button id="myBtn" type="button" class="btn btn-outline-success btn-sm">Contact Seller</button>
-              <!-- The Modal -->
-              <div id="myModal" class="modal">
-
-                <!-- Modal content -->
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <p>Seller Info : {{ post.author.email }}</p>
-                </div>
-
+      {% for post in posts.items %}
+          <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ url_for('static',filename='profile_pics/' + post.author.image_file) }}">
+            <div class="media-body">
+              <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.date_posted.strftime('posted on %d %b %Y at %-I:%-M%p') }}</small>
               </div>
-              <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Hey XIE Switch is a great place to buy college book! &lt;link&gt;" data-related="divijpawar" data-dnt="true" data-show-count="false">
-              Tweet
-              </a>
-              
+              <div class="post-title">
+              <h5><a class="article-title" href="{{ url_for('posts.post',post_id=post.id ) }}">{{ post.title }}</a></h5><small><b>Price: ₹ {{ post.price }}</b></small>
+              </div>
+              <p class="article-content">{{ post.content }}</p>
+              {% if post.image_file %}
+              <div class="media post-img">
+                <img src="{{ url_for('static',filename='post_pics/' + post.image_file) }}">
+              </div>
+              {% endif %}
+              <button class="contact-btn" type="button" onclick="onClickButton()">Contact Seller</button>
             </div>
-          </div>
-        </article>
-    {% endfor %}
-    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-        {% if page_num %}
-          {% if posts.page == page_num %}
-            <a class="btn btn-dark mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            <div class="contact-float" id="contact-float">
+              <a class="contact-exit" type="a" onclick="onClickExit()"></a>
+              <div class="float-content">The email of this seller is <br>{{ post.author.email }} </div>
+            </div>
+          </article>
+      {% endfor %}
+      {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if page_num %}
+            {% if posts.page == page_num %}
+              <a class="btn btn-dark mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+              <a class="btn btn-outline-dark mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
           {% else %}
-            <a class="btn btn-outline-dark mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+          ...
           {% endif %}
-        {% else %}
-        ...
-        {% endif %}
-    {% endfor %}
+      {% endfor %}
 
-    {% if not posts %}
+    {% if not posts.items %}
       <div class="media content-section">
-      <div>
-      <h4>XIE Switch is a local marketplace for your institution </h4>
-      </div>
-      <img src="{{url_for('static',filename='books.jpg')}}" style="width:100%;max-width:350px">
+          <div>
+          <h4>Switch is a local marketplace for your institution </h4>
+          </div>
+        <img src="{{url_for('static',filename='books.jpg')}}" style="width:100%;max-width:350px">
       </div>
 
     {% endif %}
 
+    <script>
+      function onClickButton(){
+    document.getElementById("contact-float").classList.toggle("contact-display");
+    }
+    function onClickExit(){
+    document.getElementById("contact-float").classList.toggle("contact-display");
+    }
 
-
-<script>
-// Get the modal
-var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on the button, open the modal
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-</script>
+    </script>
 {% endblock content %}

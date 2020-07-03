@@ -20,6 +20,11 @@
                     <button type="button" class="btn btn-outline-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
                 </div> 
           {% endif %}
+          <button class="contact-btn" type="button" onclick="onClickButton()">Contact Seller</button>
+        </div>
+        <div class="contact-float" id="contact-float">
+          <a class="contact-exit" type="a" onclick="onClickExit()"></a>
+          <div class="float-content">The email of this seller is <br>{{ post.author.email }} </div>
         </div>
     </article>
 
@@ -42,4 +47,13 @@
     </div>
  </div>
 </div>
+<script>
+  function onClickButton(){
+document.getElementById("contact-float").classList.toggle("contact-display");
+}
+function onClickExit(){
+document.getElementById("contact-float").classList.toggle("contact-display");
+}
+
+</script>
 {% endblock content %}
