@@ -1,0 +1,13 @@
+#Include these files in commits
+!*/
+#Git doesnt track empty directories, so track .keepdir files, which also
+# tracks the containing directory.
+!.keepdir
+!.gitignore
+!Readme.md
+
+#Exclude these files from commits
+env/
+venv/
+__pycache__/
+
